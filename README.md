@@ -1,38 +1,72 @@
 # Teleprompter Overlay
 
-App de teleprompter que flutua **sempre no topo**, ideal para ler roteiros durante reuniões no Google Meet (ou qualquer outra coisa).
+A floating, **always-on-top** teleprompter for Windows. Paste your notes or script, keep them right in front of you while you're on **Google Meet**, Zoom, or anything else — and only you see them.
 
-## Como rodar
+![Teleprompter overlay reading a meeting script](docs/screenshot.png)
 
-```powershell
-npm install      # só na primeira vez
+## Download
+
+Grab the latest build from the [**Releases**](https://github.com/vinicius-p3/teleprompter-overlay/releases/latest) page:
+
+- **Teleprompter Setup x.y.z.exe** — installer (adds a desktop + Start menu shortcut).
+- **Teleprompter-portable.exe** — portable, just double-click (no install).
+
+> **First run:** Windows shows a SmartScreen warning because the app isn't code-signed.
+> Click **More info → Run anyway**. It's normal for apps without a paid signing
+> certificate — not a virus. You can verify the download with the SHA-256 checksums in
+> [SECURITY.md](SECURITY.md).
+
+## Features
+
+- **Floats on top of everything** — drag it anywhere, resize it from the bottom-right grip, set how see-through it is.
+- **Auto-scroll** with adjustable speed, or scroll manually with the mouse wheel.
+- **Backgrounds:** black, white, or transparent, with adjustable opacity.
+- **Font size**, line spacing, text color, and an optional reading-line guide.
+- **Hide from screen sharing** — if you share your screen, the teleprompter stays invisible to everyone else.
+- **Click-through mode** — the text keeps scrolling while your clicks go straight to the meeting behind it.
+- **Global shortcuts** that work even when the meeting window is focused.
+- Remembers your script and settings automatically.
+- **Interface in English, Português, and Español** — auto-detects your system language on first run.
+
+## Usage
+
+1. Click the **✎** button, paste your script, then click **✎** again to switch to reading mode.
+2. Press **▶** to auto-scroll, or scroll manually with the mouse wheel (the wheel pauses auto-scroll).
+3. Open **⚙** to adjust background, opacity, speed, font, language, and the privacy options.
+
+### Keyboard shortcuts
+
+Global (work even when the meeting is focused):
+
+| Shortcut | Action |
+| --- | --- |
+| `Ctrl+Alt+Space` | Play / Pause |
+| `Ctrl+Alt+↑` / `Ctrl+Alt+↓` | Faster / slower |
+| `Ctrl+Alt+R` | Back to the top |
+| `Ctrl+Alt+L` | Toggle click-through mode |
+| `Ctrl+Alt+H` | Hide / show the overlay |
+
+Inside the window: `Space` play/pause, `+` / `−` font size, `Home` jump to top, `Esc` leave edit mode.
+
+## Run from source
+
+```bash
+npm install
 npm start
 ```
 
-## Recursos
+## Build the installers
 
-- **Overlay flutuante** sem moldura, arrastável pela barra superior e redimensionável pela alça no canto inferior direito.
-- **Sempre no topo** — fica acima do navegador e até de janelas em tela cheia.
-- **Fundo** preto, branco ou transparente, com **opacidade** ajustável.
-- **Rolagem automática** com controle de velocidade **ou** rolagem manual (roda do mouse).
-- **Tamanho da fonte**, espaçamento, cor do texto e linha de leitura ajustáveis.
-- **Ocultar do compartilhamento de tela** — se você compartilhar a tela no Meet, o teleprompter não aparece para os outros participantes.
-- **Modo clique-através** — os cliques passam direto para o Meet enquanto o texto rola sozinho.
-- **Idiomas** — interface em Português, English e Español. Detecta o idioma do sistema na primeira vez e pode ser trocado em Configurações ⚙.
-- Salva automaticamente o roteiro e as preferências.
+```bash
+npm run dist
+```
 
-## Atalhos globais (funcionam mesmo com o foco no Meet)
+Outputs the installer and portable `.exe` to `dist/` (and regenerates the app icon via `make-icon.js`).
 
-| Atalho | Ação |
-| --- | --- |
-| `Ctrl+Alt+Espaço` | Play / Pause |
-| `Ctrl+Alt+↑` / `Ctrl+Alt+↓` | Aumentar / diminuir velocidade |
-| `Ctrl+Alt+R` | Voltar ao início |
-| `Ctrl+Alt+L` | Ligar/desligar modo clique-através |
-| `Ctrl+Alt+H` | Esconder / mostrar o overlay |
+## Security
 
-Dentro da janela: `Espaço` play/pause, `+`/`−` fonte, `Home` volta ao topo, `Esc` sai da edição.
+The app is **100% local**: no network requests, no telemetry, nothing leaves your machine. It's built on Electron with the standard hardening enabled (context isolation, sandbox, restrictive CSP, no remote content) and ships with **zero dependency vulnerabilities**. Full details in [SECURITY.md](SECURITY.md).
 
-## Editar o roteiro
+## License
 
-Clique no botão **✎** na barra, cole o texto e clique em **✎** de novo para voltar ao modo leitura.
+[MIT](LICENSE) © Vinícius Bazilio
