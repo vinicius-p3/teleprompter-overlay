@@ -1,38 +1,39 @@
-# Segurança — Teleprompter Overlay
+# Security — Teleprompter Overlay
 
-Resumo da revisão de segurança do app (v1.2.0).
+Summary of the app’s security review (v1.2.0).
 
-## Postura geral
+## General posture
 
-- **Sem rede.** O app não faz nenhuma requisição de rede, não tem telemetria e não envia dados a lugar nenhum. Funciona 100% offline.
-- **Apenas conteúdo local.** Carrega só arquivos embutidos (`loadFile`); não abre páginas remotas nem permite navegação para fora do app.
-- **Dados ficam no seu PC.** O roteiro e as preferências são salvos localmente (armazenamento do app, na pasta de dados do usuário do Windows). Nunca saem da máquina.
-- **Sem dependências de runtime de terceiros.** O app empacotado contém apenas os arquivos-fonte do projeto + o runtime do Electron. `npm audit`: **0 vulnerabilidades**.
+* **No network.** The app does not make any network requests, has no telemetry, and does not send data anywhere. It works 100% offline.
+* **Local content only.** It only loads embedded files (`loadFile`); it does not open remote pages or allow navigation outside the app.
+* **Data stays on your PC.** The script and preferences are saved locally (app storage, in the user data folder on Windows). They never leave the machine.
+* **No third-party runtime dependencies.** The packaged app contains only the project source files + the Electron runtime. `npm audit`: **0 vulnerabilities**.
 
-## Proteções aplicadas (boas práticas do Electron)
+## Applied protections (Electron best practices)
 
-- `contextIsolation: true`, `nodeIntegration: false`, `sandbox: true` — o renderer é isolado do Node.
-- `webSecurity: true` e **Content-Security-Policy restritiva** (`default-src 'none'`, scripts/estilos só de origem própria) — bloqueia execução de conteúdo externo.
-- Bloqueio de novas janelas (`setWindowOpenHandler` → deny) e de navegação (`will-navigate` / `will-redirect`).
-- O texto do roteiro é exibido via `textContent` (nunca `innerHTML`) — sem risco de injeção a partir do conteúdo colado.
-- **Electron 42.x** (Chromium atualizado). Recomenda-se atualizar periodicamente: `npm install electron@latest -D` e reconstruir.
+* `contextIsolation: true`, `nodeIntegration: false`, `sandbox: true` — the renderer is isolated from Node.
+* `webSecurity: true` and a **restrictive Content-Security-Policy** (`default-src 'none'`, scripts/styles only from the app’s own origin) — blocks the execution of external content.
+* Blocking of new windows (`setWindowOpenHandler` → deny) and navigation (`will-navigate` / `will-redirect`).
+* The script text is displayed via `textContent` (never `innerHTML`) — no risk of injection from pasted content.
+* **Electron 42.x** (updated Chromium). Periodic updates are recommended: `npm install electron@latest -D` and rebuild.
 
-## Pontos de atenção na distribuição
+## Distribution points of attention
 
-- **Executável não assinado digitalmente.** Na primeira execução o Windows mostra o aviso do SmartScreen
-  ("Mais informações" → "Executar assim mesmo"). Isso é esperado para apps sem certificado de assinatura
-  (a assinatura é paga). Não indica malware.
-- **Verificação de integridade:** distribua os `.exe` por um canal confiável (rede interna, Drive da empresa)
-  e confira o **SHA-256** abaixo antes de executar. Para conferir no PowerShell:
+* **Executable is not digitally signed.** On first launch, Windows shows the SmartScreen warning
+  ("More info" → "Run anyway"). This is expected for apps without a signing certificate
+  (signing is paid). It does not indicate malware.
+* **Integrity verification:** distribute the `.exe` files through a trusted channel (internal network, company Drive)
+  and check the **SHA-256** below before running. To check it in PowerShell:
+
   ```powershell
   Get-FileHash "Teleprompter Setup 1.2.0.exe" -Algorithm SHA256
   ```
 
-### SHA-256 desta build (v1.2.0)
+### SHA-256 of this build (v1.2.0)
 
 ```
 Teleprompter Setup 1.2.0.exe   4A91345EF04CAC86F3E8473EFCDEE68F12D4B0F132A76F8573DF87CEADC7F5DD
 Teleprompter-portable.exe      483F558AD8E7A2F74C6E3D2E7ACE6EAD5467351275B805BE49134B6EBF0EBA5F
 ```
 
-> Os hashes mudam a cada nova build. Regere-os com o comando acima após reconstruir.
+> Hashes change with every new build. Regenerate them with the command above after rebuilding.
