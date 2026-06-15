@@ -1,0 +1,51 @@
+{
+  "name": "teleprompter-overlay",
+  "version": "1.2.0",
+  "description": "Teleprompter overlay sempre-no-topo para ler roteiros sobre o Google Meet",
+  "main": "main.js",
+  "author": "P3 Media",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "icon": "node make-icon.js",
+    "dist": "node make-icon.js && electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^42.0.0",
+    "electron-builder": "^26.0.0",
+    "png-to-ico": "^2.1.8"
+  },
+  "build": {
+    "appId": "com.p3media.teleprompter",
+    "productName": "Teleprompter",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "styles.css",
+      "renderer.js",
+      "i18n.js"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Teleprompter"
+    },
+    "portable": {
+      "artifactName": "Teleprompter-portable.exe"
+    }
+  }
+}

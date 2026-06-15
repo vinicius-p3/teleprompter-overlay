@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; base-uri 'none'; form-action 'none'; frame-src 'none'; object-src 'none';" />
+  <title>Teleprompter</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Camada de fundo (cor + opacidade ajustáveis) -->
+    <div id="scrim"></div>
+
+    <!-- Barra de controles (arrastável) -->
+    <header id="toolbar">
+      <div class="grip" data-i18n-title="grip.move" title="Arraste para mover">⠿ Teleprompter</div>
+      <div class="controls">
+        <button id="btnPlay" class="btn" data-i18n-title="btn.play" title="Play/Pause (Ctrl+Alt+Espaço)">▶</button>
+        <button id="btnSlower" class="btn" data-i18n-title="btn.slower" title="Mais devagar (Ctrl+Alt+↓)">−</button>
+        <span id="speedLabel" class="readout" data-i18n-title="speed.title" title="Velocidade">60</span>
+        <button id="btnFaster" class="btn" data-i18n-title="btn.faster" title="Mais rápido (Ctrl+Alt+↑)">+</button>
+        <span class="sep"></span>
+        <button id="btnFontDown" class="btn" data-i18n-title="btn.fontDown" title="Diminuir fonte">A−</button>
+        <button id="btnFontUp" class="btn" data-i18n-title="btn.fontUp" title="Aumentar fonte">A+</button>
+        <span class="sep"></span>
+        <button id="btnEdit" class="btn" data-i18n-title="btn.edit" title="Editar roteiro">✎</button>
+        <button id="btnSettings" class="btn" data-i18n-title="btn.settings" title="Configurações">⚙</button>
+        <span class="sep"></span>
+        <button id="btnMin" class="btn" data-i18n-title="btn.min" title="Minimizar">—</button>
+        <button id="btnClose" class="btn btn-close" data-i18n-title="btn.close" title="Fechar">✕</button>
+      </div>
+    </header>
+
+    <!-- Painel de configurações -->
+    <section id="settings" class="hidden">
+      <div class="row">
+        <label data-i18n="lang.label">Idioma</label>
+        <div class="seg" id="langSeg">
+          <button data-lang="pt" class="seg-btn active">Português</button>
+          <button data-lang="en" class="seg-btn">English</button>
+          <button data-lang="es" class="seg-btn">Español</button>
+        </div>
+      </div>
+      <div class="row">
+        <label data-i18n="bg.label">Fundo</label>
+        <div class="seg" id="bgSeg">
+          <button data-bg="black" class="seg-btn active" data-i18n="bg.black">Preto</button>
+          <button data-bg="white" class="seg-btn" data-i18n="bg.white">Branco</button>
+          <button data-bg="transparent" class="seg-btn" data-i18n="bg.transparent">Transparente</button>
+        </div>
+      </div>
+      <div class="row">
+        <label data-i18n="opacity.label">Opacidade do fundo</label>
+        <input type="range" id="opacity" min="0" max="100" value="55" />
+        <span id="opacityVal" class="readout">55%</span>
+      </div>
+      <div class="row">
+        <label data-i18n="speed.label">Velocidade</label>
+        <input type="range" id="speed" min="10" max="300" value="60" />
+        <span id="speedVal" class="readout">60</span>
+      </div>
+      <div class="row">
+        <label data-i18n="fontSize.label">Tamanho da fonte</label>
+        <input type="range" id="fontSize" min="16" max="96" value="34" />
+        <span id="fontVal" class="readout">34px</span>
+      </div>
+      <div class="row">
+        <label data-i18n="lineHeight.label">Espaçamento entre linhas</label>
+        <input type="range" id="lineHeight" min="10" max="30" value="16" />
+        <span id="lhVal" class="readout">1.6</span>
+      </div>
+      <div class="row">
+        <label data-i18n="textColor.label">Cor do texto</label>
+        <div class="seg" id="textSeg">
+          <button data-text="auto" class="seg-btn active" data-i18n="text.auto">Automática</button>
+          <button data-text="white" class="seg-btn" data-i18n="text.white">Branco</button>
+          <button data-text="black" class="seg-btn" data-i18n="text.black">Preto</button>
+        </div>
+      </div>
+      <div class="row checks">
+        <label class="check"><input type="checkbox" id="alwaysOnTop" checked /> <span data-i18n="chk.aot">Sempre no topo</span></label>
+        <label class="check"><input type="checkbox" id="protect" /> <span data-i18n="chk.protect">Ocultar do compartilhamento de tela</span></label>
+      </div>
+      <div class="row checks">
+        <label class="check"><input type="checkbox" id="clickThrough" /> <span data-i18n="chk.clickThrough">Modo clique-através (Ctrl+Alt+L)</span></label>
+        <label class="check"><input type="checkbox" id="readingLine" checked /> <span data-i18n="chk.readingLine">Linha de leitura</span></label>
+      </div>
+      <div class="row checks">
+        <label class="check"><input type="checkbox" id="mirror" /> <span data-i18n="chk.mirror">Espelhar texto (horizontal)</span></label>
+      </div>
+      <div class="hint" data-i18n-html="hint">
+        Atalhos globais (funcionam mesmo no Meet): <b>Ctrl+Alt+Espaço</b> play/pause ·
+        <b>Ctrl+Alt+↑/↓</b> velocidade · <b>Ctrl+Alt+R</b> reiniciar ·
+        <b>Ctrl+Alt+L</b> clique-através · <b>Ctrl+Alt+H</b> esconder/mostrar
+      </div>
+    </section>
+
+    <!-- Área de leitura -->
+    <main id="viewer">
+      <div id="readingLineMarker"></div>
+      <div id="text"></div>
+    </main>
+
+    <!-- Editor do roteiro -->
+    <textarea id="editor" class="hidden" data-i18n-ph="editor.ph" placeholder="Cole ou escreva aqui o roteiro da reunião..."></textarea>
+
+    <div id="resizeGrip" data-i18n-title="resize.title" title="Arraste para redimensionar"></div>
+  </div>
+
+  <script src="i18n.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>
